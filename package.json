@@ -8,7 +8,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch \"*.ts\" --exec \"ts-node\" ./src/index.ts"
+    "start": "nodemon --watch \"*.ts\" --watch \"privateKeys\" --exec \"ts-node\" ./src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^20.3.0",
