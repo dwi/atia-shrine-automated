@@ -1,9 +1,12 @@
 # Atia's Shrine Automation
 
-Automated Atia's Blessing.
+Automated Atia's Blessing, runs every day automatically.
+
+![blessing](https://github.com/dwi/atia-shrine-automated/assets/1337260/feda58fc-4829-4684-9b40-dac8735dbc05)
+
 
 > **Warning**
-> Run it locally and preferably on an encrypted volume, your private keys are exposed.
+> **Run it locally and preferably on an encrypted volume, your private keys can be exposed!**
 
 ## Prerequisites
 - Node.js 18+
