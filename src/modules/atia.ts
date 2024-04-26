@@ -86,36 +86,55 @@ const atiaContract = new ethers.Contract('0x9d3936dbd9a794ee31ef9f13814233d435bd
 export async function checkBlessings() {
   const keys = await getKeys('keys');
   console.log(`⚙️ Starting ${PREFIX} daily pray (${keys.length} addr)`);
+
   for (const key of keys) {
-    const signer = new ethers.Wallet(key, provider);
-    isActivated(signer.address).then(({ status, streak }) => {
-      if (status) {
-        console.log(`⏱️ ${PREFIX}: Already activated for ${colors.gray(signer.address.slice(-4))} (streak: ${colors.yellow(streak)})`);
-      } else {
-        activateStreak(signer).then(({ status, streak }) => {
-          if (!status) return;
-          console.log(`✅ ${PREFIX}: Activated for ${colors.gray(signer.address.slice(-4))} (streak: ${colors.yellow(streak)})`);
-        });
-      }
-    });
+    if (!key.prayerPrivateKey) {
+      console.error(`⚠️ ${PREFIX}: No private key found!`);
+      console.error(key);
+      return;
+    }
+
+    const signer = new ethers.Wallet(key.prayerPrivateKey, provider);
+
+    if (!key.delegateeAddresses) {
+      key.delegateeAddresses = [signer.address];
+    }
+
+    if (key.delegateeAddresses.length > 5) {
+      console.log(`❌ ${PREFIX}: Too much delegatees for prayer ${colors.gray(signer.address.slice(-4))}`);
+      return;
+    }
+
+    for (const delegatee of key.delegateeAddresses) {
+      isActivated(delegatee).then(({ status, streak }) => {
+        if (status) {
+          console.log(`⏱️ ${PREFIX}: Already activated for ${colors.gray(delegatee.slice(-4))} (streak: ${colors.yellow(streak)})`);
+        } else {
+          activateStreak(signer, delegatee).then(({ status, streak }) => {
+            if (!status) return;
+            console.log(`✅ ${PREFIX}: Activated for ${colors.gray(delegatee.slice(-4))} (streak: ${colors.yellow(streak)})`);
+          });
+        }
+      });
+    }
   }
 }
 
 async function isActivated(address: string) {
   const { currentStreakCount } = await atiaContract.getStreak(address);
-  const status = atiaContract.getActivationStatus(address).then(({ _, hasPrayedToday }) => hasPrayedToday);
-  return { status, streak: Number(currentStreakCount) };
+  const { _, hasPrayedToday } = await atiaContract.getActivationStatus(address);
+
+  return { status: hasPrayedToday, streak: Number(currentStreakCount) };
 }
 
-async function activateStreak(signer: ethers.Wallet) {
+async function activateStreak(signer: ethers.Wallet, delegatee: string) {
   const connectedContract = <ethers.Contract>atiaContract.connect(signer);
   try {
-    const { currentStreakCount } = await connectedContract.getStreak(signer.address);
-    await connectedContract.activateStreak(signer.address);
+    const { currentStreakCount } = await connectedContract.getStreak(delegatee);
+    await connectedContract.activateStreak(delegatee);
     return { status: true, streak: Number(currentStreakCount) + 1 };
   } catch (e: Error | any) {
-    console.log(e);
-    console.error(`⚠️ ${PREFIX}: Failed to pray for ${colors.gray(signer.address.slice(-4))} ${e.code} (${e.info?.error?.message})`);
+    console.error(`⚠️ ${PREFIX}: Failed to pray for ${colors.gray(delegatee.slice(-4))} ${e.code} (${e.info?.error?.message})`);
     return { status: false };
   }
 }

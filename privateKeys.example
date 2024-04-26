@@ -1,6 +1,17 @@
 {
     "keys": [
-        "0xYOUR",
-        "0xKEYS"
+        {
+            "prayerPrivateKey": "0x9165004be40eb157edf922afe9decec26cc930d208877b547dba58039a786e1a",
+            "delegateeAddresses": [
+                "0x40ae3EfE4bE1Bb0402c075C0E42902Ba5B930682",
+                "0x021E95f0043c4E94dd39a5cB008CF2aF2Ca187Cf"
+            ]
+        },
+        {
+            "prayerPrivateKey": "0x9165004be40eb157edf922afe9decec26cc930d208877b547dba58039a786e13"
+        },
+        {
+            "prayerPrivateKey": "0x9165004be40eb157edf922afe9decec26cc930d208877b547dba58039a786e09"
+        }
     ]
 }
