@@ -1,4 +1,4 @@
-import * as cron from 'node-cron';
+var cron = require('node-cron');
 import * as fs from 'fs';
 import { checkBlessings } from './modules/atia';
 
