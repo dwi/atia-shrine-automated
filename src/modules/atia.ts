@@ -106,11 +106,11 @@ export async function checkBlessings() {
     }
 
     for (const delegatee of key.delegateeAddresses) {
-      isActivated(delegatee).then(({ status, streak }) => {
+      await isActivated(delegatee).then(async ({ status, streak }) => {
         if (status) {
           console.log(`⏱️ ${PREFIX}: Already activated for ${colors.gray(delegatee.slice(-4))} (streak: ${colors.yellow(streak)})`);
         } else {
-          activateStreak(signer, delegatee).then(({ status, streak }) => {
+          await activateStreak(signer, delegatee).then(({ status, streak }) => {
             if (!status) return;
             console.log(`✅ ${PREFIX}: Activated for ${colors.gray(delegatee.slice(-4))} (streak: ${colors.yellow(streak)})`);
           });
@@ -131,7 +131,8 @@ async function activateStreak(signer: ethers.Wallet, delegatee: string) {
   const connectedContract = <ethers.Contract>atiaContract.connect(signer);
   try {
     const { currentStreakCount } = await connectedContract.getStreak(delegatee);
-    await connectedContract.activateStreak(delegatee);
+    const tx = await connectedContract.activateStreak(delegatee);
+    await tx.wait();
     return { status: true, streak: Number(currentStreakCount) + 1 };
   } catch (e: Error | any) {
     console.error(`⚠️ ${PREFIX}: Failed to pray for ${colors.gray(delegatee.slice(-4))} ${e.code} (${e.info?.error?.message})`);
