@@ -13,5 +13,8 @@
         {
             "prayerPrivateKey": "0x9165004be40eb157edf922afe9decec26cc930d208877b547dba58039a786e09"
         }
-    ]
+    ],
+    "kongKeys": [
+        "0x4b0a1777a68eedb153b5761d30df34ffa464071000340207kd6484634dcb12dc"
+    ],
 }
