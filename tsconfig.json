@@ -1,9 +1,17 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "strict": false
+    "strict": false,
+    "esModuleInterop": true,
+    "paths": {
+      "@utils/*": ["./src/utils/*"],
+      "@constants": ["./src/constants"]
+    }
   },
-  "include": ["./src/*"],
+  "include": ["./src/*", "test.ts"],
   "exclude": ["node_modules"]
 }
