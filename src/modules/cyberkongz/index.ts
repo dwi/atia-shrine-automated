@@ -14,6 +14,8 @@ const sliceDispenserContract = new ethers.Contract('0xd9696466ca9c3211643e4f1509
 const kreditsAbi = JSON.parse(fs.readFileSync('abis/ck-kredits.json', 'utf8'));
 const kreditsContract = new ethers.Contract('0x54efb1cc4f0331405a39d42964c3c885396919e5', kreditsAbi, RONIN_PROVIDER);
 
+if (!process.env.MORALIS_API_KEY) { throw new Error('MORALIS_API_KEY not found') };
+
 export async function checkKongz() {
   const keys = await getKeys('kongKeys');
 
@@ -42,27 +44,17 @@ export async function checkKongz() {
 
 async function getVXs(signer: ethers.Wallet) {
   try {
-    const axios = require('axios');
-
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-API-KEY': '0qtph2G19AZO958fKvchafZe8BCZzGRh',
-      },
+        'accept': '*/*',
+        'X-API-Key': process.env.MORALIS_API_KEY
+      }
     };
-    const postData = {
-      contractAddresses: ['0x241a81fc0d6692707dad2b5025a3a7cf2cf25acf'],
-      ownerAddress: signer.address,
-      paging: {
-        limit: 200,
-        offset: 0,
-        pagingStyle: 'offset',
-      },
-      tokenStandards: ['ERC721'],
-    };
-    const { data } = await axios.post('https://api-gateway.skymavis.com/skynet/ronin/tokens/balances/search', postData, config);
-    return data.result?.items?.map((item: any) => item.tokenId) || [];
+
+    const url = `https://deep-index.moralis.io/api/v2.2/${signer.address}/nft?chain=ronin&format=decimal&token_addresses[0]=0x241a81fc0d6692707dad2b5025a3a7cf2cf25acf&media_items=false`;
+    const { data } = await axios.get(url, config);
+    
+    return data.result?.map((item: any) => item.token_id) || [];
   } catch (e) {
     return [];
   }

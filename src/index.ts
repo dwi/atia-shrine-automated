@@ -1,3 +1,4 @@
+require('dotenv').config();
 var cron = require('node-cron');
 import * as fs from 'fs';
 import axios from 'axios';
