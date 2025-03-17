@@ -19,6 +19,17 @@ Automated Atia's Blessing, runs every day automatically.
 pnpm i
 ```
 
+### Set up environment variables
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your Moralis API key. You can get one from [Moralis](https://admin.moralis.com/login) by:
+1. Creating an account
+2. Creating a new API key in your dashboard
+3. Copying the API key to your `.env` file
+
 ### Copy example privateKeys
 
 ```bash
